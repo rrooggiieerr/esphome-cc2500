@@ -37,7 +37,7 @@ esphome:
   name: cc2500
 
 external_components:
-  - source: github://rrooggiieerr/esphome-livingcolors1
+  - source: github://rrooggiieerr/esphome-cc2500
 
 esp8266:
   board: nodemcu
