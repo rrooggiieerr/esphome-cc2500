@@ -55,11 +55,10 @@ cc2500:
   cs_pin: GPIO15
   channel_number: 3
   output_power: 0xFF
-
 ```
 
 ## Documentation:
-[Texas Instrumants CC2500 datasheet](https://www.ti.com/lit/ds/symlink/cc2500.pdf)
+[Texas Instruments CC2500 datasheet](https://www.ti.com/lit/ds/symlink/cc2500.pdf)
 
 ## Credits:
 [Tor Røttum](https://github.com/torrottum)'s [IKEA Ansluta ESPHome component](https://github.com/torrottum/ikea-ansluta-esphome) was very helpful for making this component.
