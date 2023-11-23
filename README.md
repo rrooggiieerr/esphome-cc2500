@@ -62,4 +62,4 @@ cc2500:
 [Texas Instrumants CC2500 datasheet](https://www.ti.com/lit/ds/symlink/cc2500.pdf)
 
 ## Credits:
-[Torrotum's IKEA Ansluta ESPHome component](https://github.com/torrottum/ikea-ansluta-esphome) was very helpful for making this component.
+[Tor Røttum](https://github.com/torrottum)'s [IKEA Ansluta ESPHome component](https://github.com/torrottum/ikea-ansluta-esphome) was very helpful for making this component.
