@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include <list>
 
 #include "esphome/core/component.h"
@@ -183,34 +184,31 @@ enum class Modulation : uint8_t {
 };
 
 struct Command {
-//	uint8_t channel;
+	uint8_t device_address = 0;
+	uint8_t channel;
 //	Modulation modulation = Modulation::TWO_FSK;
 //	bool manchester_encoding = false;
-//	uint8_t device_address = 0;
 	uint8_t length;
 	uint8_t *data;
 };
 
-class CC2500: public Component, public spi::SPIDevice<spi::BIT_ORDER_MSB_FIRST,
+class CC2500Client;
+
+class CC2500Component: public Component, public spi::SPIDevice<spi::BIT_ORDER_MSB_FIRST,
 		spi::CLOCK_POLARITY_LOW, spi::CLOCK_PHASE_LEADING, spi::DATA_RATE_2MHZ> {
 public:
 	void setup() override;
 //	void loop() override;
 	void dump_config() override;
 
-	void set_channel_number(uint8_t channel_number) {
-		this->channel_number_ = channel_number;
-	}
 	void set_output_power(uint8_t output_power) {
 		this->output_power_ = output_power;
-	}
-	void set_device_address(uint8_t device_address) {
-		this->device_address_ = device_address;
 	}
 //	void set_sniff_after_x_commands(uint16_t times) {
 //		this->sniff_after_x_commands_ = times;
 //	}
 
+	void add_device(CC2500Client *device) { this->devices_.push_back(device); }
 //	void queue_command(Command command);
 	void send_command(Command command);
 
@@ -222,19 +220,64 @@ protected:
 	void send_strobe_(uint8_t strobe);
 //	void sniff_();
 
-	uint8_t channel_number_;
 	// 0xBB -2dB
 	// 0xFE 0dB
 	// 0xFF +1dB
 	optional<uint8_t> output_power_;
-	optional<uint8_t> device_address_;
 //	optional<uint16_t> sniff_after_x_commands_;
+	std::vector<CC2500Client *> devices_;
 
 //	std::list<Command> command_queue_;
 	uint8_t commands_sent_ = 0;
 
 	bool busy_ = false;
 };
+
+/**
+ * Base class for CC2500Device, un-templated.
+ */
+class CC2500Client {
+public:
+	CC2500Client(uint8_t device_address, uint8_t channel) :
+			device_address_(device_address), channel_(channel) {
+	}
+
+	void set_parent(CC2500Component *parent);
+	void send_command(uint8_t *data, uint8_t length);
+protected:
+	CC2500Component *parent_ { nullptr };
+	uint8_t device_address_;
+	uint8_t channel_;
+};
+
+/**
+ * The CC2500Device is what components using the CC2500 will create.
+ *
+ * @tparam DEVICE_ADDRESS
+ * @tparam CHANNEL
+ */
+template<uint8_t DEVICE_ADDRESS, uint8_t CHANNEL>
+class CC2500Device: public CC2500Client {
+public:
+	CC2500Device() :
+			CC2500Client(DEVICE_ADDRESS, CHANNEL) {
+	}
+
+	CC2500Device(CC2500Component *parent, uint8_t device_address,
+			uint8_t channel) {
+		this->set_parent(parent);
+		this->set_device_address(device_address);
+		this->set_channel(channel);
+	}
+
+	void set_device_address(uint8_t device_address) {
+		this->device_address_ = device_address;
+	}
+	void set_channel(uint8_t channel) {
+		this->channel_ = channel;
+	}
+};
+
 
 }  // namespace cc2500
 }  // namespace esphome

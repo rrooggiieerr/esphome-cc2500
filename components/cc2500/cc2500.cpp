@@ -6,7 +6,7 @@ namespace cc2500 {
 
 static const char *TAG = "cc2500";
 
-void CC2500::setup() {
+void CC2500Component::setup() {
 	ESP_LOGCONFIG(TAG, "Setting up Living Colors gen 1 component...");
 	this->spi_setup();
 
@@ -37,12 +37,6 @@ void CC2500::setup() {
 //    this->write_reg_(REG_PKTCTRL1, VAL_PKTCTRL1_DEFAULT);
 //    //this->write_reg_(REG_PKTCTRL0, VAL_PKTCTRL0); // 0x05, Data whitening off
 //    this->write_reg_(REG_PKTCTRL0, VAL_PKTCTRL0_DEFAULT);
-
-    // Device Address
-    this->write_reg_(REG_ADDR, this->device_address_.value_or(0x00));
-
-    // Channel Number
-    this->write_reg_(REG_CHANNR, this->channel_number_);
 
     // Frequency Synthesizer Control
     this->write_reg_(REG_FSCTRL1, VAL_FSCTRL1); // 0x09
@@ -138,17 +132,16 @@ void CC2500::setup() {
 	this->send_strobe_(CC2500_SIDLE);
 }
 
-void CC2500::dump_config() {
+void CC2500Component::dump_config() {
 	ESP_LOGCONFIG(TAG, "CC2500 component:");
 	LOG_PIN("  CS PIN: ", this->cs_);
-	ESP_LOGCONFIG(TAG, "  Channel number: %d", this->channel_number_);
 	if (this->output_power_.has_value())
 		ESP_LOGCONFIG(TAG, "  Output power: %d", this->output_power_.value());
 //	if (this->sniff_after_x_commands_.has_value())
 //		ESP_LOGCONFIG(TAG, "  Sniff after X commands sent: %d", this->sniff_after_x_commands_.value());
 }
 
-//void CC2500::loop() {
+//void CC2500Component::loop() {
 ////	// Sniffing slows down command sending. Therefore we only sniff if we are
 ////	// not sending commands
 ////	if(!this->busy_) {
@@ -177,7 +170,7 @@ void CC2500::dump_config() {
 //	delayMicroseconds(10);
 //}
 
-void CC2500::reset_() {
+void CC2500Component::reset_() {
 	this->enable();
 	delayMicroseconds(2);
 	this->write_byte(CC2500_SRES);
@@ -185,14 +178,14 @@ void CC2500::reset_() {
 	this->disable();
 }
 
-void CC2500::write_reg_(uint8_t address, uint8_t value) {
+void CC2500Component::write_reg_(uint8_t address, uint8_t value) {
 	this->enable();
 	this->write_byte(address);
 	this->write_byte(value);
 	this->disable();
 }
 
-void CC2500::write_reg_(uint8_t address, uint8_t *data, uint8_t length) {
+void CC2500Component::write_reg_(uint8_t address, uint8_t *data, uint8_t length) {
 //	ESP_LOGV(TAG, "write_reg_(0x%02X, 0x%030X, %d)", address, data, length);
 	this->enable();
 	this->write_byte(address);
@@ -209,7 +202,7 @@ void CC2500::write_reg_(uint8_t address, uint8_t *data, uint8_t length) {
 //	return value;
 //}
 
-void CC2500::send_strobe_(uint8_t strobe) {
+void CC2500Component::send_strobe_(uint8_t strobe) {
 	this->enable();
 	this->write_byte(strobe);
 	this->disable();
@@ -227,7 +220,7 @@ void CC2500::send_strobe_(uint8_t strobe) {
 //	this->command_queue_.push_back(command);
 //}
 
-void CC2500::send_command(Command command) {
+void CC2500Component::send_command(Command command) {
 	while(this->busy_) {
 		ESP_LOGV(TAG, "busy");
 		delayMicroseconds(1);
@@ -237,13 +230,13 @@ void CC2500::send_command(Command command) {
 
 	ESP_LOGV(TAG, "send_command");
 	ESP_LOGV(TAG, "  channel: %d", command.channel);
-	ESP_LOGV(TAG, "  modulation: 0x%X", (uint8_t) command.modulation);
-	ESP_LOGV(TAG, "  manchester encoding: %s", command.manchester_encoding ? "enabled" : "disabled");
+//	ESP_LOGV(TAG, "  modulation: 0x%X", (uint8_t) command.modulation);
+//	ESP_LOGV(TAG, "  manchester encoding: %s", command.manchester_encoding ? "enabled" : "disabled");
 	ESP_LOGV(TAG, "  data: 0x%032"  PRIX64, command.data);
 	ESP_LOGV(TAG, "  length: %d", command.length);
 
-//	this->write_reg_(REG_CHANNR, command.channel);
-//	this->write_reg_(REG_ADDR, command.device_address);
+	this->write_reg_(REG_ADDR, command.device_address);
+	this->write_reg_(REG_CHANNR, command.channel);
 
 	this->send_strobe_(CC2500_SIDLE);
 	this->write_reg_(0x7F, command.data, command.length);
@@ -253,7 +246,7 @@ void CC2500::send_command(Command command) {
 	this->busy_ = false;
 }
 
-//void CC2500::sniff_() {
+//void CC2500Component::sniff_() {
 //	std::vector < uint8_t > packet;
 //
 //	this->send_strobe_(CC2500_SRX);
@@ -272,6 +265,21 @@ void CC2500::send_command(Command command) {
 //	this->send_strobe_(CC2500_SIDLE);
 //	this->send_strobe_(CC2500_SFRX);
 //}
+
+void CC2500Client::set_parent(CC2500Component *parent) {
+	this->parent_ = parent;
+	this->parent_->add_device(this);
+}
+
+void CC2500Client::send_command(uint8_t *data, uint8_t length) {
+	cc2500::Command command = cc2500::Command {
+		.device_address = this->device_address_,
+		.channel = this->channel_,
+		.length = length,
+	};
+	command.data = data;
+	this->parent_->send_command(command);
+}
 
 }
 }
