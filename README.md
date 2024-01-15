@@ -28,7 +28,6 @@ To set up this CC2500 component you first need to place a top-level SPI componen
 
 ## Configuration variables:
 - __cs_pin__ (Required): The pin to use for the chip select of the SPI bus.
-- __channel_number__ (Required): The channel signals should be transmitted to.
 - __output_power__ (Optional): The output power signals should be transmitted with.
 
 ## ESPHome example configuration:
