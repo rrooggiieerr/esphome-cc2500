@@ -274,12 +274,12 @@ void CC2500Client::set_parent(CC2500Component *parent) {
 }
 
 void CC2500Client::send_command(uint8_t *data, uint8_t length) {
-	cc2500::Command command = cc2500::Command {
-		.device_address = this->device_address_,
-		.channel = this->channel_,
-		.length = length,
-	};
+	cc2500::Command command = cc2500::Command();
+	command.device_address = this->device_address_;
+	command.channel = this->channel_;
+	command.length = length;
 	command.data = data;
+
 	this->parent_->send_command(command);
 }
 
