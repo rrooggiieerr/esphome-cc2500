@@ -1,6 +1,8 @@
 #include "esphome/core/log.h"
 #include "cc2500.h"
 
+#include <cinttypes>
+
 namespace esphome {
 namespace cc2500 {
 
