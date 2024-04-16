@@ -170,7 +170,7 @@ void CC2500Component::dump_config() {
 ////		delayMicroseconds(500);
 ////	}
 //	delayMicroseconds(10);
-}
+//}
 
 void CC2500Component::reset_() {
 	this->enable();
