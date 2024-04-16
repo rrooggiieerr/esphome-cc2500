@@ -268,7 +268,7 @@ void CC2500Component::send_command(Command command) {
 //	this->send_strobe_(CC2500_SFRX);
 //}
 
-void CC2500Client::set_c2500_parent(CC2500Component *parent) {
+void CC2500Client::set_cc2500_parent(CC2500Component *parent) {
 	this->parent_ = parent;
 	this->parent_->add_device(this);
 }
