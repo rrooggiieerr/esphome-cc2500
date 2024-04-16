@@ -170,7 +170,7 @@ void CC2500Component::dump_config() {
 ////		delayMicroseconds(500);
 ////	}
 //	delayMicroseconds(10);
-//}
+}
 
 void CC2500Component::reset_() {
 	this->enable();
@@ -268,7 +268,7 @@ void CC2500Component::send_command(Command command) {
 //	this->send_strobe_(CC2500_SFRX);
 //}
 
-void CC2500Client::set_parent(CC2500Component *parent) {
+void CC2500Client::set_c2500_parent(CC2500Component *parent) {
 	this->parent_ = parent;
 	this->parent_->add_device(this);
 }

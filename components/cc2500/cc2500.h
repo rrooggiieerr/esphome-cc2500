@@ -242,7 +242,7 @@ public:
 			device_address_(device_address), channel_(channel) {
 	}
 
-	void set_parent(CC2500Component *parent);
+	void set_cc2500_parent(CC2500Component *parent);
 	void send_command(uint8_t *data, uint8_t length);
 protected:
 	CC2500Component *parent_ { nullptr };

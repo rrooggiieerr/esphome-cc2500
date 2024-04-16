@@ -32,6 +32,13 @@ async def to_code(config):
     await cg.register_component(var, config)
     await spi.register_spi_device(var, config)
 
+# A schema to use for all CC2500 devices, all CC2500 integrations must extend this!
+CC2500_DEVICE_SCHEMA = cv.Schema(
+    {
+        cv.GenerateID(CONF_CC2500_ID): cv.use_id(CC2500Component),
+    }
+)
+
 async def register_cc2500_device(var, config):
     parent = await cg.get_variable(config[CONF_CC2500_ID])
-    cg.add(var.set_parent(parent))
+    cg.add(var.set_cc2500_parent(parent))
