@@ -265,7 +265,7 @@ public:
 
 	CC2500Device(CC2500Component *parent, uint8_t device_address,
 			uint8_t channel) {
-		this->set_parent(parent);
+		this->set_cc2500_parent(parent);
 		this->set_device_address(device_address);
 		this->set_channel(channel);
 	}
