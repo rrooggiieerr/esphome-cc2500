@@ -201,6 +201,9 @@ public:
 //	void loop() override;
 	void dump_config() override;
 
+	void set_receive_interrupt_pin(InternalGPIOPin *receive_interrupt_pin) {
+		this->receive_interrupt_pin_ = receive_interrupt_pin;
+	}
 	void set_output_power(uint8_t output_power) {
 		this->output_power_ = output_power;
 	}
@@ -220,6 +223,7 @@ protected:
 	void send_strobe_(uint8_t strobe);
 //	void sniff_();
 
+	InternalGPIOPin *receive_interrupt_pin_{nullptr};
 	// 0xBB -2dB
 	// 0xFE 0dB
 	// 0xFF +1dB
