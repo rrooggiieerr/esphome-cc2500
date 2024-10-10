@@ -8,6 +8,18 @@ namespace cc2500 {
 
 static const char *TAG = "cc2500";
 
+// Function to print character arrays as hex for debugging
+bool to_hex(char* dest, const uint8_t* values, size_t val_len) {
+    *dest = '\0'; /* in case val_len==0 */
+    while(val_len--) {
+        /* sprintf directly to where dest points */
+        sprintf(dest, "%02X", *values);
+        dest += 2;
+        ++values;
+    }
+    return true;
+}
+
 void CC2500Component::setup() {
 	ESP_LOGCONFIG(TAG, "Setting up Living Colors gen 1 component...");
 	this->spi_setup();
