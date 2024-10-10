@@ -180,11 +180,12 @@ void CC2500Component::reset_() {
 	this->disable();
 }
 
-void CC2500Component::write_reg_(uint8_t address, uint8_t value) {
+uint8_t CC2500Component::write_reg_(uint8_t address, uint8_t value) {
 	this->enable();
 	this->write_byte(address);
-	this->write_byte(value);
+	uint8_t result = this->transfer_byte(value);
 	this->disable();
+	return result;
 }
 
 void CC2500Component::write_reg_(uint8_t address, uint8_t *data, uint8_t length) {

@@ -217,7 +217,7 @@ public:
 
 protected:
 	void reset_();
-	void write_reg_(uint8_t address, uint8_t value);
+	uint8_t write_reg_(uint8_t address, uint8_t value);
 	void write_reg_(uint8_t address, uint8_t *data, uint8_t length);
 //	uint8_t read_reg_(uint8_t address);
 	void send_strobe_(uint8_t strobe);
