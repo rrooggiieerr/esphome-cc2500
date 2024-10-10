@@ -212,9 +212,9 @@ void CC2500Component::loop() {
 			if(!success) {
 				char s[fifo_length*2+1];
 				to_hex(s, &packet[0], fifo_length);
-				ESP_LOGI(TAG, "New CC2500 format detected");
-				ESP_LOGI(TAG, "  length: %d", fifo_length);
-				ESP_LOGI(TAG, "  data: 0x%s", s);
+				ESP_LOGV(TAG, "New CC2500 format detected");
+				ESP_LOGV(TAG, "  length: %d", fifo_length);
+				ESP_LOGV(TAG, "  data: 0x%s", s);
 			}
 		}
 	}
