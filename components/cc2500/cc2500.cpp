@@ -247,7 +247,9 @@ void CC2500Component::send_command(Command command) {
 	ESP_LOGV(TAG, "  channel: %d", command.channel);
 //	ESP_LOGV(TAG, "  modulation: 0x%X", (uint8_t) command.modulation);
 //	ESP_LOGV(TAG, "  manchester encoding: %s", command.manchester_encoding ? "enabled" : "disabled");
-	ESP_LOGV(TAG, "  data: 0x%032"  PRIX64, command.data);
+	char s[command.length*2+1];
+	to_hex(s, command.data, command.length);
+	ESP_LOGV(TAG, "  data: 0x%s", s);
 	ESP_LOGV(TAG, "  length: %d", command.length);
 
 	this->write_reg_(REG_ADDR, command.device_address);
