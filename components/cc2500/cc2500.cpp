@@ -23,7 +23,7 @@ bool to_hex(char* dest, const uint8_t* values, size_t val_len) {
 }
 
 void CC2500Component::setup() {
-	ESP_LOGCONFIG(TAG, "Setting up Living Colors gen 1 component...");
+	ESP_LOGCONFIG(TAG, "Setting up CC2500 component...");
 	this->spi_setup();
 
     // reset device (0x30)
