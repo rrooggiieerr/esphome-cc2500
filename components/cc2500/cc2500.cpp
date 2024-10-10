@@ -272,6 +272,9 @@ void CC2500Component::send_command(Command command) {
 
 	//ToDo Calculate 2 bytes of CRC-16 checksum to data (optional)
 
+	this->send_strobe_(CC2500_SIDLE);
+	this->send_strobe_(CC2500_SFTX);
+
 	this->write_reg_(REG_ADDR, command.device_address);
 	this->write_reg_(REG_CHANNR, command.channel);
 
