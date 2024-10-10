@@ -93,7 +93,7 @@ static const uint8_t REG_PATABLE    = 0x3E; // Output Power Programming
 static const uint8_t REG_FIFO    = 0x3F;
 //static const uint8_t REG_FIFO    = 0x3F;
 
-static const uint8_t VAL_IOCFG2_DEFAULT   = 0x29;
+static const uint8_t VAL_IOCFG2_DEFAULT   = 0x29; // CHIP_RDYn
 static const uint8_t VAL_IOCFG1_DEFAULT   = 0x2E;
 static const uint8_t VAL_IOCFG0_DEFAULT   = 0x3F;
 static const uint8_t VAL_FIFOTHR_DEFAULT  = 0x07;
@@ -207,21 +207,15 @@ public:
 	void set_output_power(uint8_t output_power) {
 		this->output_power_ = output_power;
 	}
-//	void set_sniff_after_x_commands(uint16_t times) {
-//		this->sniff_after_x_commands_ = times;
-//	}
 
 	void add_device(CC2500Client *device) { this->devices_.push_back(device); }
-//	void queue_command(Command command);
 	void send_command(Command command);
 
 protected:
 	void reset_();
 	uint8_t write_reg_(uint8_t address, uint8_t value);
 	void write_reg_(uint8_t address, uint8_t *data, uint8_t length);
-//	uint8_t read_reg_(uint8_t address);
 	void send_strobe_(uint8_t strobe);
-//	void sniff_();
 	static void IRAM_ATTR receive_interrupt_(CC2500Component *cc2500);
 
 	InternalGPIOPin *receive_interrupt_pin_{nullptr};
@@ -230,10 +224,8 @@ protected:
 	// 0xFE 0dB
 	// 0xFF +1dB
 	optional<uint8_t> output_power_;
-//	optional<uint16_t> sniff_after_x_commands_;
 	std::vector<CC2500Client *> devices_;
 
-//	std::list<Command> command_queue_;
 	uint8_t commands_sent_ = 0;
 
 	bool busy_ = false;

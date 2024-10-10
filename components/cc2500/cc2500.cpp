@@ -170,8 +170,6 @@ void CC2500Component::dump_config() {
 	LOG_PIN("  CS PIN: ", this->cs_);
 	if (this->output_power_.has_value())
 		ESP_LOGCONFIG(TAG, "  Output power: %d", this->output_power_.value());
-//	if (this->sniff_after_x_commands_.has_value())
-//		ESP_LOGCONFIG(TAG, "  Sniff after X commands sent: %d", this->sniff_after_x_commands_.value());
 }
 
 void CC2500Component::loop() {
@@ -198,7 +196,7 @@ void CC2500Component::loop() {
 
 			char s[fifo_length*2+1];
 			to_hex(s, &packet[0], fifo_length);
-//			ESP_LOGV(TAG, "  data: 0x%s", s);
+			// ESP_LOGV(TAG, "  data: 0x%s", s);
 
 			uint16_t checksum = uint16_t(packet[fifo_length - 2]) << 8;
 			checksum += uint16_t(packet[fifo_length - 1]);
@@ -227,6 +225,7 @@ void CC2500Component::reset_() {
 	this->enable();
 	delayMicroseconds(2);
 	this->write_byte(CC2500_SRES);
+    //ToDo Wait for chip ready instead of delay
 	delayMicroseconds(45);
 	this->disable();
 }
@@ -248,31 +247,11 @@ void CC2500Component::write_reg_(uint8_t address, uint8_t *data, uint8_t length)
 	this->disable();
 }
 
-//uint8_t CC2500::read_reg_(uint8_t address) {
-//	address += 0x80;
-//	this->enable();
-//	uint8_t value = this->transfer_byte(address);
-//	this->disable();
-//	return value;
-//}
-
 void CC2500Component::send_strobe_(uint8_t strobe) {
 	this->enable();
 	this->write_byte(strobe);
 	this->disable();
 }
-
-//void CC2500::queue_command(Command command) {
-//	ESP_LOGV(TAG, "queue_command");
-//	ESP_LOGV(TAG, "  channel: %d", command.channel);
-//	ESP_LOGV(TAG, "  modulation: 0x%030X", (uint8_t) command.modulation);
-//	ESP_LOGV(TAG, "  manchester encoding: %s", command.manchester_encoding ? "enabled" : "disabled");
-//	ESP_LOGV(TAG, "  data: 0x%032"  PRIX64, command.data);
-//	ESP_LOGV(TAG, "  length: %d", command.length);
-//	auto pair = std::make_pair(address, Command { .data = data,
-//			.length = length });
-//	this->command_queue_.push_back(command);
-//}
 
 void CC2500Component::send_command(Command command) {
 	while(this->busy_) {
@@ -291,6 +270,8 @@ void CC2500Component::send_command(Command command) {
 	ESP_LOGV(TAG, "  data: 0x%s", s);
 	ESP_LOGV(TAG, "  length: %d", command.length);
 
+	//ToDo Calculate 2 bytes of CRC-16 checksum to data (optional)
+
 	this->write_reg_(REG_ADDR, command.device_address);
 	this->write_reg_(REG_CHANNR, command.channel);
 
@@ -301,26 +282,6 @@ void CC2500Component::send_command(Command command) {
 	this->commands_sent_++;
 	this->busy_ = false;
 }
-
-//void CC2500Component::sniff_() {
-//	std::vector < uint8_t > packet;
-//
-//	this->send_strobe_(CC2500_SRX);
-//	this->write_reg_(REG_IOCFG1, 0x01);
-//	delay(20);
-//
-//	uint8_t len = this->read_reg_(REG_FIFO);
-//	if (len > 15) {
-//		for (int i = 0; i < len; i++) {
-//			packet.push_back(this->read_reg_(REG_FIFO));
-//		}
-//
-//		ESP_LOGV(TAG, "Sniffed packet: 0x%032" PRIX64, packet);
-//		//this->on_remote_click_callback_.call(packet);
-//	}
-//	this->send_strobe_(CC2500_SIDLE);
-//	this->send_strobe_(CC2500_SFRX);
-//}
 
 void CC2500Client::set_cc2500_parent(CC2500Component *parent) {
 	this->parent_ = parent;
