@@ -198,7 +198,7 @@ class CC2500Component: public Component, public spi::SPIDevice<spi::BIT_ORDER_MS
 		spi::CLOCK_POLARITY_LOW, spi::CLOCK_PHASE_LEADING, spi::DATA_RATE_2MHZ> {
 public:
 	void setup() override;
-//	void loop() override;
+	void loop() override;
 	void dump_config() override;
 
 	void set_receive_interrupt_pin(InternalGPIOPin *receive_interrupt_pin) {
@@ -222,8 +222,10 @@ protected:
 //	uint8_t read_reg_(uint8_t address);
 	void send_strobe_(uint8_t strobe);
 //	void sniff_();
+	static void IRAM_ATTR receive_interrupt_(CC2500Component *cc2500);
 
 	InternalGPIOPin *receive_interrupt_pin_{nullptr};
+	ISRInternalGPIOPin receive_interrupt_pin_isr_;
 	// 0xBB -2dB
 	// 0xFE 0dB
 	// 0xFF +1dB
@@ -248,6 +250,7 @@ public:
 
 	void set_cc2500_parent(CC2500Component *parent);
 	void send_command(uint8_t *data, uint8_t length);
+	virtual bool receive_command(uint8_t *data, uint8_t length);
 protected:
 	CC2500Component *parent_ { nullptr };
 	uint8_t device_address_;

@@ -8,6 +8,8 @@ namespace cc2500 {
 
 static const char *TAG = "cc2500";
 
+bool interrupt_received_ = false;
+
 // Function to print character arrays as hex for debugging
 bool to_hex(char* dest, const uint8_t* values, size_t val_len) {
     *dest = '\0'; /* in case val_len==0 */
@@ -28,6 +30,17 @@ void CC2500Component::setup() {
 	// this->send_strobe_(CC2500_SRES);
     this->reset_();
     this->reset_();
+
+	if(this->receive_interrupt_pin_ != nullptr) {
+		this->receive_interrupt_pin_->setup();
+	    this->receive_interrupt_pin_isr_ = this->receive_interrupt_pin_->to_isr();
+	     this->receive_interrupt_pin_->attach_interrupt(CC2500Component::receive_interrupt_, this,
+	                                             gpio::INTERRUPT_RISING_EDGE);
+
+	    // Output Pin Configuration
+	    // Interrupt when a complete packet has been received
+	    this->write_reg_(REG_IOCFG2, 0x06);
+	}
 
 //    // GDO2 Output Pin Configuration
 //    // this->write_reg_(REG_IOCFG2, VAL_IOCFG2_DEFAULT);
@@ -146,6 +159,12 @@ void CC2500Component::setup() {
 	this->send_strobe_(CC2500_SIDLE);
 }
 
+void IRAM_ATTR CC2500Component::receive_interrupt_(
+		CC2500Component *cc2500) {
+	// This is an interrupt handler - we can't call any virtual method from this method
+	interrupt_received_ = true;
+}
+
 void CC2500Component::dump_config() {
 	ESP_LOGCONFIG(TAG, "CC2500 component:");
 	LOG_PIN("  CS PIN: ", this->cs_);
@@ -155,34 +174,54 @@ void CC2500Component::dump_config() {
 //		ESP_LOGCONFIG(TAG, "  Sniff after X commands sent: %d", this->sniff_after_x_commands_.value());
 }
 
-//void CC2500Component::loop() {
-////	// Sniffing slows down command sending. Therefore we only sniff if we are
-////	// not sending commands
-////	if(!this->busy_) {
-////		this->busy_ = true;
-////		this->sniff_();
-////		this->busy_ = false;
-////	}
-//
-//	//	if (this->command_queue_.empty()) {
-////		this->sniff_();
-////	} else if (this->commands_sent_
-////			% this->sniff_after_x_commands_.value_or(5) == 0) {
-////		this->sniff_();
-////	}
-//
-////	if(!this->command_queue_.empty()) {
-////		delayMicroseconds(500);
-////		ESP_LOGV(TAG, "command queue size: %d", this->command_queue_.size());
-////		Command command = this->command_queue_.front();
-////		delayMicroseconds(500);
-////		this->send_command(command.data, command.length);
-////		delayMicroseconds(500);
-////		this->command_queue_.pop_front();
-////		delayMicroseconds(500);
-////	}
-//	delayMicroseconds(10);
-//}
+void CC2500Component::loop() {
+	if(interrupt_received_) {
+		interrupt_received_ = false;
+		ESP_LOGV(TAG, "Interrupt");
+
+		// SIDLE
+		this->send_strobe_(CC2500_SIDLE);
+
+		uint8_t fifo_length = this->write_reg_(0xFB, 0x00);
+
+		// Enable receive
+		this->send_strobe_(CC2500_SRX);
+		this->write_reg_(REG_IOCFG1, 0x01);
+
+		if(fifo_length > 0) {
+			std::vector<uint8_t> packet;
+			ESP_LOGV(TAG, "  FIFO length: %d", fifo_length);
+			for (int i = 0; i < fifo_length; i++) {
+				uint8_t b = this->write_reg_(0xBF, 0x00);
+				packet.push_back(b);
+			}
+
+			char s[fifo_length*2+1];
+			to_hex(s, &packet[0], fifo_length);
+//			ESP_LOGV(TAG, "  data: 0x%s", s);
+
+			uint16_t checksum = uint16_t(packet[fifo_length - 2]) << 8;
+			checksum += uint16_t(packet[fifo_length - 1]);
+			ESP_LOGV(TAG, "  checksum: 0x%04X", checksum);
+			//ToDo Validate last 2 bytes of CRC-16 checksum (optional)
+
+			bool success = false;
+			for (auto device : this->devices_) {
+				if(device->receive_command(&packet[0], fifo_length))
+					success = true;
+			}
+
+			if(!success) {
+				char s[fifo_length*2+1];
+				to_hex(s, &packet[0], fifo_length);
+				ESP_LOGI(TAG, "New CC2500 format detected");
+				ESP_LOGI(TAG, "  length: %d", fifo_length);
+				ESP_LOGI(TAG, "  data: 0x%s", s);
+			}
+		}
+	}
+	delayMicroseconds(10);
+}
 
 void CC2500Component::reset_() {
 	this->enable();
