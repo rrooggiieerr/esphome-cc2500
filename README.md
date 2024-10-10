@@ -1,5 +1,5 @@
 # esphome-cc2500
-Texas Instrumants CC2500 Low-Power 2.4 GHz RF Transceiver component for ESPHome.
+Texas Instruments CC2500 Low-Power 2.4 GHz RF Transceiver component for ESPHome.
 
 This CC2500 component for ESPHome controls the CC200 transeiver for sending data to devices using a compatible receiver. Other components that depend on the CC2500 component can reference it. Receiving data is not yet implemented, but is flanned for a future update.
 
