@@ -10,7 +10,7 @@ static const char *TAG = "cc2500";
 
 bool interrupt_received_ = false;
 
-// Function to print character arrays as hex for debugging
+// Function to convert raw array to hex char array for logging
 bool to_hex(char* dest, const uint8_t* values, size_t val_len) {
     *dest = '\0'; /* in case val_len==0 */
     while(val_len--) {
@@ -212,9 +212,9 @@ void CC2500Component::loop() {
 			if(!success) {
 				char s[fifo_length*2+1];
 				to_hex(s, &packet[0], fifo_length);
-				ESP_LOGV(TAG, "New CC2500 format detected");
-				ESP_LOGV(TAG, "  length: %d", fifo_length);
-				ESP_LOGV(TAG, "  data: 0x%s", s);
+				ESP_LOGD(TAG, "Unknown message format");
+				ESP_LOGD(TAG, "  length: %d", fifo_length);
+				ESP_LOGD(TAG, "  data: 0x%s", s);
 			}
 		}
 	}
@@ -239,7 +239,6 @@ uint8_t CC2500Component::write_reg_(uint8_t address, uint8_t value) {
 }
 
 void CC2500Component::write_reg_(uint8_t address, uint8_t *data, uint8_t length) {
-//	ESP_LOGV(TAG, "write_reg_(0x%02X, 0x%030X, %d)", address, data, length);
 	this->enable();
 	this->write_byte(address);
 	// Send data
