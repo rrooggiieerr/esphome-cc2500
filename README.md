@@ -28,7 +28,7 @@ To set up this CC2500 component you first need to place a top-level SPI componen
 |  SI  |D7/GPIO13|
 | SCLK |D5/GPIO14|
 |  SO  |D6/GPIO12|
-| GD02 |         |
+| GDO2 |D1/GPIO5 |
 | GDO0 |         |
 | CSn  |D8/GPIO15|
 
@@ -38,7 +38,7 @@ To set up this CC2500 component you first need to place a top-level SPI componen
 
 ## Configuration variables:
 - __cs_pin__ (Required): The pin to use for the chip select of the SPI bus.
-- __receive_interrupt_pin__ (Optional): The ESP pin the CC2500 interrupt pin is connected to.
+- __gdo2_pin__ (Optional): The ESP pin the CC2500 GDO2 pin is connected to.
 - __output_power__ (Optional): The output power signals should be transmitted with.
 
 ## ESPHome example configuration:
@@ -63,7 +63,7 @@ spi:
 
 cc2500:
   cs_pin: GPIO15
-  receive_interrupt_pin: GPIO5
+  gdo2_pin: GPIO5
   output_power: 0xFF
 ```
 

@@ -31,10 +31,10 @@ void CC2500Component::setup() {
     this->reset_();
     this->reset_();
 
-	if(this->receive_interrupt_pin_ != nullptr) {
-		this->receive_interrupt_pin_->setup();
-	    this->receive_interrupt_pin_isr_ = this->receive_interrupt_pin_->to_isr();
-	     this->receive_interrupt_pin_->attach_interrupt(CC2500Component::receive_interrupt_, this,
+	if(this->gdo2_pin_ != nullptr) {
+		this->gdo2_pin_->setup();
+	    this->gdo2_pin_isr_ = this->gdo2_pin_->to_isr();
+	     this->gdo2_pin_->attach_interrupt(CC2500Component::receive_interrupt_, this,
 	                                             gpio::INTERRUPT_RISING_EDGE);
 
 	    // Output Pin Configuration

@@ -201,8 +201,8 @@ public:
 	void loop() override;
 	void dump_config() override;
 
-	void set_receive_interrupt_pin(InternalGPIOPin *receive_interrupt_pin) {
-		this->receive_interrupt_pin_ = receive_interrupt_pin;
+	void set_gdo2_pin(InternalGPIOPin *gdo2_pin) {
+		this->gdo2_pin_ = gdo2_pin;
 	}
 	void set_output_power(uint8_t output_power) {
 		this->output_power_ = output_power;
