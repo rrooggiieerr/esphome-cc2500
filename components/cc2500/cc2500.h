@@ -218,8 +218,8 @@ protected:
 	void send_strobe_(uint8_t strobe);
 	static void IRAM_ATTR receive_interrupt_(CC2500Component *cc2500);
 
-	InternalGPIOPin *receive_interrupt_pin_{nullptr};
-	ISRInternalGPIOPin receive_interrupt_pin_isr_;
+	InternalGPIOPin *gdo2_pin_{nullptr};
+	ISRInternalGPIOPin gdo2_pin_isr_;
 	// 0xBB -2dB
 	// 0xFE 0dB
 	// 0xFF +1dB
