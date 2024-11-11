@@ -209,7 +209,7 @@ public:
 	}
 
 	void add_device(CC2500Client *device) { this->devices_.push_back(device); }
-	void send_command(Command command);
+	void send(Command command);
 
 protected:
 	void reset_();
@@ -241,8 +241,8 @@ public:
 	}
 
 	void set_cc2500_parent(CC2500Component *parent);
-	void send_command(uint8_t *data, uint8_t length);
-	virtual bool receive_command(uint8_t *data, uint8_t length);
+	void send(uint8_t *data, uint8_t length);
+	virtual bool receive(uint8_t *data, uint8_t length);
 protected:
 	CC2500Component *parent_ { nullptr };
 	uint8_t device_address_;

@@ -205,7 +205,7 @@ void CC2500Component::loop() {
 
 			bool success = false;
 			for (auto device : this->devices_) {
-				if(device->receive_command(&packet[0], fifo_length))
+				if(device->receive(&packet[0], fifo_length))
 					success = true;
 			}
 
@@ -252,7 +252,7 @@ void CC2500Component::send_strobe_(uint8_t strobe) {
 	this->disable();
 }
 
-void CC2500Component::send_command(Command command) {
+void CC2500Component::send(Command command) {
 	while(this->busy_) {
 		ESP_LOGV(TAG, "busy");
 		delayMicroseconds(1);
@@ -260,7 +260,7 @@ void CC2500Component::send_command(Command command) {
 
 	this->busy_ = true;
 
-	ESP_LOGV(TAG, "send_command");
+	ESP_LOGV(TAG, "send");
 	ESP_LOGV(TAG, "  channel: %d", command.channel);
 //	ESP_LOGV(TAG, "  modulation: 0x%X", (uint8_t) command.modulation);
 //	ESP_LOGV(TAG, "  manchester encoding: %s", command.manchester_encoding ? "enabled" : "disabled");
@@ -290,14 +290,14 @@ void CC2500Client::set_cc2500_parent(CC2500Component *parent) {
 	this->parent_->add_device(this);
 }
 
-void CC2500Client::send_command(uint8_t *data, uint8_t length) {
+void CC2500Client::send(uint8_t *data, uint8_t length) {
 	cc2500::Command command = cc2500::Command();
 	command.device_address = this->device_address_;
 	command.channel = this->channel_;
 	command.length = length;
 	command.data = data;
 
-	this->parent_->send_command(command);
+	this->parent_->send(command);
 }
 
 }
