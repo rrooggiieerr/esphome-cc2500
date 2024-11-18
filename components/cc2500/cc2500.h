@@ -208,7 +208,7 @@ public:
 		this->output_power_ = output_power;
 	}
 
-	void add_device(CC2500Client *device) { this->devices_.push_back(device); }
+	void add_device(CC2500Client *device);
 	void send(Command command);
 
 protected:
@@ -225,6 +225,7 @@ protected:
 	// 0xFF +1dB
 	optional<uint8_t> output_power_;
 	std::vector<CC2500Client *> devices_;
+	uint8_t max_packet_length_ = 0;
 
 	uint8_t commands_sent_ = 0;
 
@@ -236,13 +237,14 @@ protected:
  */
 class CC2500Client {
 public:
-	CC2500Client(uint8_t device_address, uint8_t channel) :
-			device_address_(device_address), channel_(channel) {
+	CC2500Client(uint8_t device_address, uint8_t channel, uint8_t packet_length) :
+		packet_length(packet_length), device_address_(device_address), channel_(channel) {
 	}
 
-	void set_cc2500_parent(CC2500Component *parent);
+	void set_parent(CC2500Component *parent);
 	void send(uint8_t *data, uint8_t length);
 	virtual bool receive(uint8_t *data, uint8_t length);
+	uint8_t packet_length;
 protected:
 	CC2500Component *parent_ { nullptr };
 	uint8_t device_address_;
@@ -255,25 +257,11 @@ protected:
  * @tparam DEVICE_ADDRESS
  * @tparam CHANNEL
  */
-template<uint8_t DEVICE_ADDRESS, uint8_t CHANNEL>
+template<uint8_t DEVICE_ADDRESS, uint8_t CHANNEL, uint8_t PACKET_LENGTH>
 class CC2500Device: public CC2500Client {
 public:
 	CC2500Device() :
-			CC2500Client(DEVICE_ADDRESS, CHANNEL) {
-	}
-
-	CC2500Device(CC2500Component *parent, uint8_t device_address,
-			uint8_t channel) {
-		this->set_cc2500_parent(parent);
-		this->set_device_address(device_address);
-		this->set_channel(channel);
-	}
-
-	void set_device_address(uint8_t device_address) {
-		this->device_address_ = device_address;
-	}
-	void set_channel(uint8_t channel) {
-		this->channel_ = channel;
+			CC2500Client(DEVICE_ADDRESS, CHANNEL, PACKET_LENGTH) {
 	}
 };
 

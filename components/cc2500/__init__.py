@@ -56,4 +56,4 @@ CC2500_DEVICE_SCHEMA = cv.Schema(
 
 async def register_cc2500_device(var, config):
     parent = await cg.get_variable(config[CONF_CC2500_ID])
-    cg.add(var.set_cc2500_parent(parent))
+    cg.add(var.set_parent(parent))

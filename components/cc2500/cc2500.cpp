@@ -42,6 +42,13 @@ void CC2500Component::setup() {
 	    this->write_reg_(REG_IOCFG2, 0x06);
 	}
 
+	// Packet Length
+	ESP_LOGCONFIG(TAG, "Max packet length: %i", this->max_packet_length_);
+	if(this->max_packet_length_ == 0)
+		this->write_reg_(REG_PKTLEN, VAL_PKTLEN_DEFAULT); // 0xFF
+	else
+		this->write_reg_(REG_PKTLEN, this->max_packet_length_);
+
 //    // GDO2 Output Pin Configuration
 //    // this->write_reg_(REG_IOCFG2, VAL_IOCFG2_DEFAULT);
 //    //this->write_reg_(REG_IOCFG2, 0x06);
@@ -221,6 +228,12 @@ void CC2500Component::loop() {
 	delayMicroseconds(10);
 }
 
+void CC2500Component::add_device(CC2500Client *device) {
+	this->devices_.push_back(device);
+	if(device->packet_length > this->max_packet_length_)
+		this->max_packet_length_ = device->packet_length;
+}
+
 void CC2500Component::reset_() {
 	this->enable();
 	delayMicroseconds(2);
@@ -279,13 +292,14 @@ void CC2500Component::send(Command command) {
 
 	this->send_strobe_(CC2500_SIDLE);
 	this->write_reg_(0x7F, command.data, command.length);
+//	this->send_strobe_(CC2500_SFRX);
 	this->send_strobe_(CC2500_STX);
 
 	this->commands_sent_++;
 	this->busy_ = false;
 }
 
-void CC2500Client::set_cc2500_parent(CC2500Component *parent) {
+void CC2500Client::set_parent(CC2500Component *parent) {
 	this->parent_ = parent;
 	this->parent_->add_device(this);
 }
