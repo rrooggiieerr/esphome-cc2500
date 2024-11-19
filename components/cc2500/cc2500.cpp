@@ -205,23 +205,23 @@ void CC2500Component::loop() {
 			to_hex(s, &packet[0], fifo_length);
 			// ESP_LOGV(TAG, "  data: 0x%s", s);
 
-			uint16_t checksum = uint16_t(packet[fifo_length - 2]) << 8;
-			checksum += uint16_t(packet[fifo_length - 1]);
-			ESP_LOGV(TAG, "  checksum: 0x%04X", checksum);
-			//ToDo Validate last 2 bytes of CRC-16 checksum (optional)
+			bool checksum_valid = (bool) (packet[fifo_length - 1] & 0b10000000);
+			if(!checksum_valid) {
+				ESP_LOGE(TAG, "Invalid checksum");
+			} else {
+				bool success = false;
+				for (auto device : this->devices_) {
+					if(device->receive(&packet[0], fifo_length))
+						success = true;
+				}
 
-			bool success = false;
-			for (auto device : this->devices_) {
-				if(device->receive(&packet[0], fifo_length))
-					success = true;
-			}
-
-			if(!success) {
-				char s[fifo_length*2+1];
-				to_hex(s, &packet[0], fifo_length);
-				ESP_LOGD(TAG, "Unknown message format");
-				ESP_LOGD(TAG, "  length: %d", fifo_length);
-				ESP_LOGD(TAG, "  data: 0x%s", s);
+				if(!success) {
+					char s[fifo_length*2+1];
+					to_hex(s, &packet[0], fifo_length);
+					ESP_LOGD(TAG, "Unknown message format");
+					ESP_LOGD(TAG, "  length: %d", fifo_length);
+					ESP_LOGD(TAG, "  data: 0x%s", s);
+				}
 			}
 		}
 	}
