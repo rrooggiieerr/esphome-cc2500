@@ -282,8 +282,6 @@ void CC2500Component::send(Command command) {
 	ESP_LOGV(TAG, "  data: 0x%s", s);
 	ESP_LOGV(TAG, "  length: %d", command.length);
 
-	//ToDo Calculate 2 bytes of CRC-16 checksum to data (optional)
-
 	this->send_strobe_(CC2500_SIDLE);
 	this->send_strobe_(CC2500_SFTX);
 
