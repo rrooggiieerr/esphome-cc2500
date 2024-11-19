@@ -10,14 +10,18 @@
 
 ## Introduction
 
-This CC2500 component for ESPHome controls the CC2500 transeiver for sending and receiving data
-using a compatible receiver. Other components that depend on the CC2500 component can reference it.
+This [ESPHome External Component](https://esphome.io/components/external_components) lets you
+transmit and receive data using a compatible CC2500 transceiver. Other components that depend on
+the CC2500 component can build on it.
 
-To set up this CC2500 component you first need to place a top-level SPI component which defines the pins to use.
+This component doesn't let you send data nor interpret the received data, you need a separate
+component that implements the data format needed for your hardware. In debug and verbose logging
+mode it does log all incomming trafic on the default channel with the default settings.
 
 ## Hardware required:
+
 - ESP8266, ESP32 or other ESPHome supported microcontroller
-- CC2500 transceiver
+- CC2500 transceiver module
 
 ## Wiring:
 
@@ -32,38 +36,68 @@ To set up this CC2500 component you first need to place a top-level SPI componen
 | GDO0 |         |
 | CSn  |D8/GPIO15|
 
-![](wiring1.jpg)
-![](wiring2.jpg)
-![](wiring3.jpg)
+The solderpads of the CC2500 transceiver is just a bit closer spaced than the width of a ribbon
+cable, you need a steady hand to solder the wires.
+
+<img src="wiring1.jpg" width="33%"/><img src="wiring2.jpg" width="33%"/><img src="wiring3.jpg" width="33%"/>
+
+But I've created a shield that fits the Wemos Mini. Contact me if you like to buy one!
+
+<img src="Wemos CC2500 Shield A.jpg" width="33%"/>
 
 ## Configuration variables:
 - __cs_pin__ (Required): The pin to use for the chip select of the SPI bus.
-- __gdo2_pin__ (Optional): The ESP pin the CC2500 GDO2 pin is connected to.
+- __gdo2_pin__ (Optional): The ESP pin the CC2500 GDO2 pin is connected to. Needed for receiving
+  data.
 - __output_power__ (Optional): The output power signals should be transmitted with.
 
-## ESPHome example configuration:
+### ESPHome example configuration:
+
+To set up this CC2500 component you first need to place a top-level SPI component which defines the
+pins to use.
+
+Example YAML for Wemos C3 mini and CC2500 shield:
+
 ```
 esphome:
   name: cc2500
 
 external_components:
-  - source: github://rrooggiieerr/esphome-cc2500
+  - source:
+      type: git
+      url: https://github.com/rrooggiieerr/esphome-cc2500
+      # ref: 0.0.3
+    components: [cc2500]
 
-esp8266:
-  board: nodemcu
+esp32:
+  board: lolin_c3_mini
+  variant: esp32c3
 
 # Enable logging
 logger:
   level: DEBUG
 
+# Enable Home Assistant API
+api:
+  encryption:
+    key: ...
+
+ota:
+  - platform: esphome
+    password: ...
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
 spi:
-  clk_pin: GPIO14
-  mosi_pin: GPIO13
-  miso_pin: GPIO12
+  clk_pin: GPIO2
+  mosi_pin: GPIO4
+  miso_pin: GPIO3
 
 cc2500:
-  cs_pin: GPIO15
-  gdo2_pin: GPIO5
+  cs_pin: GPIO5
+  gdo2_pin: GPIO10
   output_power: 0xFF
 ```
 
@@ -73,7 +107,9 @@ cc2500:
 
 ## Credits:
 
-[Tor Røttum](https://github.com/torrottum)'s [IKEA Ansluta ESPHome component](https://github.com/torrottum/ikea-ansluta-esphome) was very helpful for making this component.
+[Tor Røttum](https://github.com/torrottum)'s
+[ESPHome IKEA Ansluta component](https://github.com/torrottum/ikea-ansluta-esphome) was very
+helpful for making this component.
 
 ## Support my work
 
