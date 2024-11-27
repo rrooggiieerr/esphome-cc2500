@@ -3,7 +3,7 @@
 [![GitHub Release][releases-shield]][releases]
 [![Licence][license-shield]][license]
 [![Maintainer][maintainer-shield]][maintainer]  
-[![Github Sponsors][github-shield]][github]
+[![GitHub Sponsors][github-shield]][github]
 [![PayPal][paypal-shield]][paypal]
 [![BuyMeCoffee][buymecoffee-shield]][buymecoffee]
 [![Patreon][patreon-shield]][patreon]
@@ -16,7 +16,7 @@ the CC2500 component can build on it.
 
 This component doesn't let you send data nor interpret the received data, you need a separate
 component that implements the data format needed for your hardware. In debug and verbose logging
-mode it does log all incomming trafic on the default channel with the default settings.
+mode it does log all incoming traffic on the default channel with the default settings.
 
 ## Hardware required:
 
@@ -46,6 +46,7 @@ But I've created a shield that fits the Wemos Mini. Contact me if you like to bu
 <img src="Wemos CC2500 Shield A.jpg" width="33%"/>
 
 ## Configuration variables:
+
 - __cs_pin__ (Required): The pin to use for the chip select of the SPI bus.
 - __gdo2_pin__ (Optional): The ESP pin the CC2500 GDO2 pin is connected to. Needed for receiving
   data.
@@ -116,7 +117,7 @@ helpful for making this component.
 Do you enjoy using this ESPHome component? Then consider supporting my work using one of the
 following platforms, your donation is greatly appreciated and keeps me motivated:
 
-[![Github Sponsors][github-shield]][github]
+[![GitHub Sponsors][github-shield]][github]
 [![PayPal][paypal-shield]][paypal]
 [![BuyMeCoffee][buymecoffee-shield]][buymecoffee]
 [![Patreon][patreon-shield]][patreon]
