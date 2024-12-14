@@ -18,14 +18,14 @@ This component doesn't let you send data nor interpret the received data, you ne
 component that implements the data format needed for your hardware. In debug and verbose logging
 mode it does log all incoming traffic on the default channel with the default settings.
 
-## Hardware required:
+## Hardware required
 
 - ESP8266, ESP32 or other ESPHome supported microcontroller
 - CC2500 transceiver module
 
-## Wiring:
+## Wiring
 
-The solderpads of the CC2500 transceiver is just a bit closer spaced than the width of a ribbon
+The solderpads of the CC2500 transceiver are just a bit closer spaced than the width of a ribbon
 cable, you need a steady hand to solder the wires.
 
 <img src="wiring1.jpg" width="33%"/><img src="wiring2.jpg" width="33%"/><img src="wiring3.jpg" width="33%"/>
@@ -47,14 +47,14 @@ like to buy one!
 |      GDO0       |     A0     |       NC      |       A0      |     GPIO2     |     GPIO0     |
 |       CSn       | D8/GPIO15  |     GPIO15    |     GPIO16    |     GPIO5     |     GPIO1     |
 
-## Configuration variables:
+## Configuration variables
 
 - __cs_pin__ (Required): The pin to use for the chip select of the SPI bus.
 - __gdo2_pin__ (Optional): The ESP pin the CC2500 GDO2 pin is connected to. Needed for receiving
   data.
 - __output_power__ (Optional): The output power signals should be transmitted with.
 
-### ESPHome example configuration:
+### ESPHome example configuration
 
 To set up this CC2500 component you first need to place a top-level SPI component which defines the
 pins to use.
