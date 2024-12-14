@@ -44,7 +44,7 @@ like to buy one!
 |      SCLK       | D5/GPIO14  |     GPIO14    |     GPIO14    |     GPIO2     |     GPIO2     |
 |       SO        | D6/GPIO12  |     GPIO12    |     GPIO12    |     GPIO3     |     GPIO3     |
 | GDO2 (interrupt)| D1/GPIO5   |     GPIO5     |     GPIO15    |     GPIO10    |     GPIO5     |
-|      GDO0       |     A0     |       NC      |       A0      |     GPIO2     |     GPIO0     |
+|      GDO0       |     A0     |       NC      |       A0      |       NC      |     GPIO0     |
 |       CSn       | D8/GPIO15  |     GPIO15    |     GPIO16    |     GPIO5     |     GPIO1     |
 
 ## Configuration variables
@@ -133,7 +133,6 @@ spi:
 
 cc2500:
   cs_pin: GPIO5
-  gdo0_pin: GPIO2
   gdo2_pin: GPIO10 # Interrupt
   output_power: 0xFF
 ```
