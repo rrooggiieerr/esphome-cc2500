@@ -25,25 +25,27 @@ mode it does log all incoming traffic on the default channel with the default se
 
 ## Wiring:
 
-|CC2500| ESP8266 |
-|:----:|:-------:|
-| GND  |    G    |
-| VDD  |   3V    |
-|  SI  |D7/GPIO13|
-| SCLK |D5/GPIO14|
-|  SO  |D6/GPIO12|
-| GDO2 |D1/GPIO5 |
-| GDO0 |         |
-| CSn  |D8/GPIO15|
-
 The solderpads of the CC2500 transceiver is just a bit closer spaced than the width of a ribbon
 cable, you need a steady hand to solder the wires.
 
 <img src="wiring1.jpg" width="33%"/><img src="wiring2.jpg" width="33%"/><img src="wiring3.jpg" width="33%"/>
 
-But I've created a shield that fits the Wemos Mini. Contact me if you like to buy one!
+But I've created a Wemos mini Shield that is tested with the D1 mini and C3 mini. Contact me if you
+like to buy one!
 
 <img src="Wemos CC2500 Shield A.jpg" width="33%"/>
+
+|     CC2500      | NodeMcu V3 | Wemos D1 mini | Wemos D1 mini | Wemos C3 mini | Wemos C3 mini |
+|                 |            |   Shield V1   |   Shield V2   |   Shield V1   |   Shield V2   |
+|:---------------:|:----------:|:-------------:|:-------------:|:-------------:|:-------------:|
+|       GND       |     G      |      GND      |      GND      |      GND      |      GND      |
+|       VDD       |     3V     |      3V3      |      3V3      |      3V3      |      3V3      |
+|       SI        | D7/GPIO13  |     GPIO13    |     GPIO13    |     GPIO4     |     GPIO4     |
+|      SCLK       | D5/GPIO14  |     GPIO14    |     GPIO14    |     GPIO2     |     GPIO2     |
+|       SO        | D6/GPIO12  |     GPIO12    |     GPIO12    |     GPIO3     |     GPIO3     |
+| GDO2 (interrupt)| D1/GPIO5   |     GPIO5     |     GPIO15    |     GPIO10    |     GPIO5     |
+|      GDO0       |     A0     |       NC      |       A0      |     GPIO2     |     GPIO0     |
+|       CSn       | D8/GPIO15  |     GPIO15    |     GPIO16    |     GPIO5     |     GPIO1     |
 
 ## Configuration variables:
 
@@ -57,7 +59,7 @@ But I've created a shield that fits the Wemos Mini. Contact me if you like to bu
 To set up this CC2500 component you first need to place a top-level SPI component which defines the
 pins to use.
 
-Example YAML for Wemos C3 mini and CC2500 shield:
+Example YAML for Wemos C3 mini and CC2500 Shield:
 
 ```
 esphome:
@@ -90,7 +92,40 @@ ota:
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
+```
 
+CC2500 settings for Wemos D1 mini and CC2500 Shield V1.0
+
+```
+spi:
+  clk_pin: GPIO14
+  mosi_pin: GPIO13
+  miso_pin: GPIO12
+
+cc2500:
+  cs_pin: GPIO15
+  gdo2_pin: GPIO5 # Interrupt
+  output_power: 0xFF
+```
+
+CC2500 settings for Wemos D1 mini and CC2500 Shield V2.0
+
+```
+spi:
+  clk_pin: GPIO14
+  mosi_pin: GPIO13
+  miso_pin: GPIO12
+
+cc2500:
+  cs_pin: GPIO16
+  gdo0_pin: A0
+  gdo2_pin: GPIO15 # Interrupt
+  output_power: 0xFF
+```
+
+SPI settings for Wemos C3 mini and CC2500 Shield V1.0
+
+```
 spi:
   clk_pin: GPIO2
   mosi_pin: GPIO4
@@ -98,7 +133,23 @@ spi:
 
 cc2500:
   cs_pin: GPIO5
-  gdo2_pin: GPIO10
+  gdo0_pin: GPIO2
+  gdo2_pin: GPIO10 # Interrupt
+  output_power: 0xFF
+```
+
+SPI settings for Wemos C3 mini and CC2500 Shield V2.0
+
+```
+spi:
+  clk_pin: GPIO2
+  mosi_pin: GPIO4
+  miso_pin: GPIO3
+
+cc2500:
+  cs_pin: GPIO1
+  gdo0_pin: GPIO0
+  gdo2_pin: GPIO5 # Interrupt
   output_power: 0xFF
 ```
 
