@@ -32,7 +32,6 @@ CONFIG_SCHEMA = cv.Schema(
         cv.Optional(CONF_GDO0_PIN): adc.validate_adc_pin,
         cv.Optional(CONF_GDO2_PIN): validate_gdo2_pin,
         cv.Optional(CONF_OUTPUT_POWER, default=255): cv.uint8_t,
-        # cv.Optional(CONF_SNIFF_AFTER_X_COMMANDS, default=5): cv.uint16_t,
     }
 ).extend(cv.COMPONENT_SCHEMA).extend(spi.spi_device_schema(cs_pin_required=True))
 
@@ -46,8 +45,6 @@ async def to_code(config):
         cg.add(var.set_gdo2_pin(pin))
     if CONF_OUTPUT_POWER in config:
         cg.add(var.set_output_power(config[CONF_OUTPUT_POWER]))
-    # if CONF_SNIFF_AFTER_X_COMMANDS in config:
-    #     cg.add(var.set_sniff_after_x_commands(config[CONF_SNIFF_AFTER_X_COMMANDS]))
     
     await cg.register_component(var, config)
     await spi.register_spi_device(var, config)
