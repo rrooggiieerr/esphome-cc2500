@@ -201,6 +201,9 @@ public:
 	void loop() override;
 	void dump_config() override;
 
+	void set_gdo0_pin(InternalGPIOPin *gdo0_pin) {
+		this->gdo0_pin = gdo0_pin;
+	}
 	void set_gdo2_pin(InternalGPIOPin *gdo2_pin) {
 		this->gdo2_pin_ = gdo2_pin;
 	}
@@ -211,6 +214,7 @@ public:
 	void add_device(CC2500Client *device);
 	void send(Command command);
 
+	InternalGPIOPin *gdo0_pin{nullptr};
 protected:
 	void reset_();
 	uint8_t write_reg_(uint8_t address, uint8_t value);

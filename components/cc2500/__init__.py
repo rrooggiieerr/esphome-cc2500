@@ -1,6 +1,6 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
-from esphome.components import spi
+from esphome.components import adc, spi
 from esphome import pins
 from esphome.const import CONF_ID, CONF_NUMBER
 from esphome.core import CORE
@@ -13,6 +13,7 @@ CC2500Component = cc2500_ns.class_("CC2500Component", cg.Component, spi.SPIDevic
 CC2500Device = cc2500_ns.class_("CC2500Device")
 
 CONF_CC2500_ID = 'cc2500_id'
+CONF_GDO0_PIN = 'gdo0_pin'
 CONF_GDO2_PIN = 'gdo2_pin'
 CONF_OUTPUT_POWER = 'output_power'
 # CONF_SNIFF_AFTER_X_COMMANDS = 'sniff_after_x_commands'
@@ -28,6 +29,7 @@ def validate_gdo2_pin(value):
 CONFIG_SCHEMA = cv.Schema(
     {
         cv.GenerateID(): cv.declare_id(CC2500Component),
+        cv.Optional(CONF_GDO0_PIN): adc.validate_adc_pin,
         cv.Optional(CONF_GDO2_PIN): validate_gdo2_pin,
         cv.Optional(CONF_OUTPUT_POWER, default=255): cv.uint8_t,
         # cv.Optional(CONF_SNIFF_AFTER_X_COMMANDS, default=5): cv.uint16_t,
@@ -36,6 +38,9 @@ CONFIG_SCHEMA = cv.Schema(
 
 async def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
+    if CONF_GDO0_PIN in config:
+        pin = await cg.gpio_pin_expression(config[CONF_GDO0_PIN])
+        cg.add(var.set_gdo0_pin(pin))
     if CONF_GDO2_PIN in config:
         pin = await cg.gpio_pin_expression(config[CONF_GDO2_PIN])
         cg.add(var.set_gdo2_pin(pin))
