@@ -223,7 +223,6 @@ protected:
 	static void IRAM_ATTR receive_interrupt_(CC2500Component *cc2500);
 
 	InternalGPIOPin *gdo2_pin_{nullptr};
-	ISRInternalGPIOPin gdo2_pin_isr_;
 	// 0xBB -2dB
 	// 0xFE 0dB
 	// 0xFF +1dB
