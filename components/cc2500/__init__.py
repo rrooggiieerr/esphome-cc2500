@@ -16,7 +16,6 @@ CONF_CC2500_ID = 'cc2500_id'
 CONF_GDO0_PIN = 'gdo0_pin'
 CONF_GDO2_PIN = 'gdo2_pin'
 CONF_OUTPUT_POWER = 'output_power'
-# CONF_SNIFF_AFTER_X_COMMANDS = 'sniff_after_x_commands'
 
 def validate_gdo2_pin(value):
     value = pins.internal_gpio_input_pin_schema(value)
