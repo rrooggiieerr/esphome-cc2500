@@ -35,8 +35,7 @@ like to buy one!
 
 <img src="Wemos CC2500 Shield A.jpg" width="33%"/>
 
-|     CC2500      | NodeMcu V3 | Wemos D1 mini | Wemos D1 mini | Wemos C3 mini | Wemos C3 mini |
-|                 |            |   Shield V1   |   Shield V2   |   Shield V1   |   Shield V2   |
+|     CC2500      | NodeMcu V3 |Wemos D1 mini<br/>Shield V1|Wemos D1 mini<br/>Shield V2|Wemos C3 mini<br/>Shield V1|Wemos C3 mini<br/>Shield V2|
 |:---------------:|:----------:|:-------------:|:-------------:|:-------------:|:-------------:|
 |       GND       |     G      |      GND      |      GND      |      GND      |      GND      |
 |       VDD       |     3V     |      3V3      |      3V3      |      3V3      |      3V3      |
