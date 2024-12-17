@@ -151,6 +151,12 @@ void CC2500Component::setup() {
 //    this->write_reg_(REG_TEST1, VAL_TEST1_DEFAULT); // 0x31, Reset
 //    this->write_reg_(REG_TEST0, VAL_TEST0_DEFAULT); // 0x0B, Reset
 
+	if(this->gdo0_pin_ != nullptr) {
+		// Enable analog temperature sensor
+		this->write_reg_(REG_IOCFG0, 0x80);
+		this->write_reg_(REG_PTEST, 0x7F);
+	}
+
     // Output Power Programming
     // this->write_reg_(REG_PATABLE, 0xFF);
     this->write_reg_(REG_PATABLE, this->output_power_.value_or(0xFF));

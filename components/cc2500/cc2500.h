@@ -202,7 +202,10 @@ public:
 	void dump_config() override;
 
 	void set_gdo0_pin(InternalGPIOPin *gdo0_pin) {
-		this->gdo0_pin = gdo0_pin;
+		this->gdo0_pin_ = gdo0_pin;
+	}
+	InternalGPIOPin* get_gdo0_pin() {
+		return this->gdo0_pin_;
 	}
 	void set_gdo2_pin(InternalGPIOPin *gdo2_pin) {
 		this->gdo2_pin_ = gdo2_pin;
@@ -213,8 +216,6 @@ public:
 
 	void add_device(CC2500Client *device);
 	void send(Command command);
-
-	InternalGPIOPin *gdo0_pin{nullptr};
 protected:
 	void reset_();
 	uint8_t write_reg_(uint8_t address, uint8_t value);
@@ -222,6 +223,7 @@ protected:
 	void send_strobe_(uint8_t strobe);
 	static void IRAM_ATTR receive_interrupt_(CC2500Component *cc2500);
 
+	InternalGPIOPin *gdo0_pin_{nullptr};
 	InternalGPIOPin *gdo2_pin_{nullptr};
 	// 0xBB -2dB
 	// 0xFE 0dB

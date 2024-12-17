@@ -18,6 +18,9 @@ This component doesn't let you send data nor interpret the received data, you ne
 component that implements the data format needed for your hardware. In debug and verbose logging
 mode it does log all incoming traffic on the default channel with the default settings.
 
+The CC2500 build in temperature sensor is currently very crude implemented for ESP8266 based boards
+when GDO0 is connected to A0.
+
 ## Hardware required
 
 - ESP8266, ESP32 or other ESPHome supported microcontroller
@@ -35,20 +38,21 @@ like to buy one!
 
 <img src="Wemos CC2500 Shield A.jpg" width="33%"/>
 
-|     CC2500      | NodeMcu V3 |Wemos D1 mini<br/>Shield V1|Wemos D1 mini<br/>Shield V2|Wemos C3 mini<br/>Shield V1|Wemos C3 mini<br/>Shield V2|
-|:---------------:|:----------:|:-------------:|:-------------:|:-------------:|:-------------:|
-|       GND       |     G      |      GND      |      GND      |      GND      |      GND      |
-|       VDD       |     3V     |      3V3      |      3V3      |      3V3      |      3V3      |
-|       SI        | D7/GPIO13  |     GPIO13    |     GPIO13    |     GPIO4     |     GPIO4     |
-|      SCLK       | D5/GPIO14  |     GPIO14    |     GPIO14    |     GPIO2     |     GPIO2     |
-|       SO        | D6/GPIO12  |     GPIO12    |     GPIO12    |     GPIO3     |     GPIO3     |
-| GDO2 (interrupt)| D1/GPIO5   |     GPIO5     |     GPIO15    |     GPIO10    |     GPIO5     |
-|      GDO0       |     A0     |       NC      |       A0      |       NC      |     GPIO0     |
-|       CSn       | D8/GPIO15  |     GPIO15    |     GPIO16    |     GPIO5     |     GPIO1     |
+|     CC2500       | NodeMcu V3 |Wemos D1 mini<br/>Shield V1|Wemos D1 mini<br/>Shield V2|Wemos C3 mini<br/>Shield V1|Wemos C3 mini<br/>Shield V2|
+|:----------------:|:----------:|:-------------:|:-------------:|:-------------:|:-------------:|
+|       GND        |     G      |      GND      |      GND      |      GND      |      GND      |
+|       VDD        |     3V     |      3V3      |      3V3      |      3V3      |      3V3      |
+|       SI         | D7/GPIO13  |     GPIO13    |     GPIO13    |     GPIO4     |     GPIO4     |
+|      SCLK        | D5/GPIO14  |     GPIO14    |     GPIO14    |     GPIO2     |     GPIO2     |
+|       SO         | D6/GPIO12  |     GPIO12    |     GPIO12    |     GPIO3     |     GPIO3     |
+| GDO2 (interrupt) | D1/GPIO5   |     GPIO5     |     GPIO15    |     GPIO10    |     GPIO5     |
+|GDO0 (temperature)|     A0     |       NC      |       A0      |       NC      |     GPIO0     |
+|       CSn        | D8/GPIO15  |     GPIO15    |     GPIO16    |     GPIO5     |     GPIO1     |
 
 ## Configuration variables
 
 - __cs_pin__ (Required): The pin to use for the chip select of the SPI bus.
+- __gdo0_pin__ (Optional): The ESP pin the CC2500 GDO0 pin is connected to. Needed for receiving the CC2500 temperature.
 - __gdo2_pin__ (Optional): The ESP pin the CC2500 GDO2 pin is connected to. Needed for receiving
   data.
 - __output_power__ (Optional): The output power signals should be transmitted with.
@@ -120,6 +124,12 @@ cc2500:
   gdo0_pin: A0
   gdo2_pin: GPIO15 # Interrupt
   output_power: 0xFF
+
+sensor:
+  - platform: cc2500
+    temperature:
+      name: "Temperature"
+      update_interval: 5s
 ```
 
 SPI settings for Wemos C3 mini and CC2500 Shield V1.0
