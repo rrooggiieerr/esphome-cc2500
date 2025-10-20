@@ -10,31 +10,32 @@
 
 ## Introduction
 
-This [ESPHome External Component](https://esphome.io/components/external_components) lets you
+This [ESPHome External Component](https://esphome.io/components/external_components) allows you to
 transmit and receive data using a compatible CC2500 transceiver. Other components that depend on
-the CC2500 component can build on it.
+the CC2500 can build upon it.
 
-This component doesn't let you send data nor interpret the received data, you need a separate
-component that implements the data format needed for your hardware. In debug and verbose logging
-mode it does log all incoming traffic on the default channel with the default settings.
+This component itself doesn't let you send data nor interpret the received data, you need a
+separate component that implements the required data format for your hardware. When debug or
+verbose logging is enabled, it logs all incoming traffic on the default channel with default
+settings.
 
-The CC2500 build in temperature sensor is currently very crude implemented for ESP8266 based boards
-when GDO0 is connected to A0.
+The CC2500’s built-in temperature sensor is currently implemented in a basic way for ESP8266-based
+boards when GDO0 is connected to A0.
 
 ## Hardware required
 
-- ESP8266, ESP32 or other ESPHome supported microcontroller
+- ESP8266, ESP32 or another ESPHome supported microcontroller
 - CC2500 transceiver module
 
 ## Wiring
 
-The solderpads of the CC2500 transceiver are just a bit closer spaced than the width of a ribbon
-cable, you need a steady hand to solder the wires.
+The solder pads on the CC2500 transceiver are slightly closer together than the width of a ribbon
+cable, so soldering requires a steady hand.
 
 <img src="wiring1.jpg" width="33%"/><img src="wiring2.jpg" width="33%"/><img src="wiring3.jpg" width="33%"/>
 
-But I've created a Wemos mini Shield that is tested with the D1 mini and C3 mini. Contact me if you
-like to buy one!
+If you prefer, I’ve created a Wemos Mini Shield that has been tested with both the D1 mini and the
+C3 mini. Contact me if you’d like to purchase one!
 
 <img src="Wemos CC2500 Shield A.jpg" width="33%"/>
 
@@ -51,16 +52,16 @@ like to buy one!
 
 ## Configuration variables
 
-- __cs_pin__ (Required): The pin to use for the chip select of the SPI bus.
-- __gdo0_pin__ (Optional): The ESP pin the CC2500 GDO0 pin is connected to. Needed for receiving the CC2500 temperature.
-- __gdo2_pin__ (Optional): The ESP pin the CC2500 GDO2 pin is connected to. Needed for receiving
+- __cs_pin__ (Required): The pin to use for the SPI chip select.
+- __gdo0_pin__ (Optional): The ESP pin connected to the CC2500 GDO0 pin. Required to read the
+  CC2500 temperature.
+- __gdo2_pin__ (Optional): The ESP pin connected to the CC2500 GDO2 pin. Required for receiving
   data.
-- __output_power__ (Optional): The output power signals should be transmitted with.
+- __output_power__ (Optional): The transmission power for outgoing signals.
 
 ### ESPHome example configuration
 
-To set up this CC2500 component you first need to place a top-level SPI component which defines the
-pins to use.
+To set up this CC2500 component, first define a top-level SPI component specifying which pins to use.
 
 Example YAML for Wemos C3 mini and CC2500 Shield:
 
@@ -171,9 +172,18 @@ cc2500:
 [ESPHome IKEA Ansluta component](https://github.com/torrottum/ikea-ansluta-esphome) was very
 helpful for making this component.
 
-## Support my work
+## Contribution and appreciation
 
-Do you enjoy using this ESPHome component? Then consider supporting my work using one of the
+You can contribute to this component, or show your appreciation, in the following ways.
+
+### Star this external component
+
+Help other ESPHome and CC2500 users find this external component by starring this GitHub page.
+Click **⭐ Star** on the top right of the GitHub page.
+
+### Support my work
+
+Do you enjoy using this ESPHome component? Please consider supporting my work through one of the
 following platforms, your donation is greatly appreciated and keeps me motivated:
 
 [![GitHub Sponsors][github-shield]][github]
@@ -181,10 +191,24 @@ following platforms, your donation is greatly appreciated and keeps me motivated
 [![BuyMeCoffee][buymecoffee-shield]][buymecoffee]
 [![Patreon][patreon-shield]][patreon]
 
-## Hire me
+### ESPHome support
 
-If you're in need for a freelance ESP developer for your project please contact me, you can find my
-email address on [my GitHub profile](https://github.com/rrooggiieerr).
+[Book a one-hour ESPHome support session](https://buymeacoffee.com/rrooggiieerr/e/470127). I’ll
+help you troubleshoot your ESPHome setup or answer your ESPHome-related questions.
+
+What can be done in one hour:
+- ESPHome walktrough, I explain to you how ESPHome works
+- Assistance setting up your ESP device
+- Install and configure an ESPHome (External) Component
+
+What takes more time:
+- Support for ESPHome Component developers
+
+### Hire me
+
+If you would like to have an ESPHome component developed for your product or are in need for a
+freelance ESP developer for your project please contact me, you can find my email address on
+[my GitHub profile](https://github.com/rrooggiieerr).
 
 [releases]: https://github.com/rrooggiieerr/esphome-cc2500/releases
 [releases-shield]: https://img.shields.io/github/v/release/rrooggiieerr/esphome-cc2500?style=for-the-badge
