@@ -6,7 +6,7 @@
 namespace esphome {
 namespace cc2500 {
 
-static const char *TAG = "cc2500";
+static const char *const TAG = "cc2500";
 
 bool interrupt_received_ = false;
 
