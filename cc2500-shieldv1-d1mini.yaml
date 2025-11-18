@@ -1,0 +1,17 @@
+# Configuration for CC2500 Shield V1.0 on Wemos D1 mini
+
+external_components:
+  - source: github://rrooggiieerr/esphome-cc2500@main
+    components: [cc2500]
+
+spi:
+  id: cc2500_spi
+  clk_pin: GPIO14
+  mosi_pin: GPIO13
+  miso_pin: GPIO12
+
+cc2500:
+  spi_id: cc2500_spi
+  cs_pin: GPIO15
+  gdo2_pin: GPIO5 # Interrupt
+  output_power: 0xFF
