@@ -214,9 +214,16 @@ void CC2500Component::loop() {
 			if(!checksum_valid) {
 				ESP_LOGW(TAG, "Invalid checksum");
 			} else {
+				uint8_t rssi = uint8_t(packet[fifo_length - 2]);
+				if(rssi >= 128)
+					rssi = ((rssi - 256) / 2) - 72;
+				else
+					rssi = (rssi / 2) - 72;
+				uint8_t lqi = packet[fifo_length - 1] & 0b01111111;
+
 				bool success = false;
 				for (auto device : this->devices_) {
-					if(device->receive(&packet[0], fifo_length))
+					if(device->receive(&packet[0], fifo_length, rssi, lqi))
 						success = true;
 				}
 

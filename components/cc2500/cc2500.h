@@ -248,7 +248,12 @@ public:
 
 	void set_parent(CC2500Component *parent);
 	void send(uint8_t *data, uint8_t length);
-	virtual bool receive(uint8_t *data, uint8_t length);
+	virtual bool receive(uint8_t *data, uint8_t length, uint8_t rssi, uint8_t lqi) {
+		return this->receive(data, length);
+	}
+	virtual bool receive(uint8_t *data, uint8_t length) {
+		return false;
+	}
 	uint8_t packet_length;
 protected:
 	CC2500Component *parent_ { nullptr };
