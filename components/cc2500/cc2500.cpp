@@ -220,7 +220,7 @@ void CC2500Component::receive_() {
 		} else {
 			// See 17.3 of the datasheet
 			uint8_t RSSI_offset = 72;
-			uint8_t rssi = uint8_t(packet[fifo_length - 2]);
+			float rssi = uint8_t(packet[fifo_length - 2]);
 			if(rssi >= 128)
 				rssi = ((rssi - 256) / 2) - RSSI_offset;
 			else
