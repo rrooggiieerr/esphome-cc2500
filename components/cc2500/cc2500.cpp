@@ -194,15 +194,16 @@ void CC2500Component::loop() {
 
 		this->receive_();
 	}
-	delayMicroseconds(10);
 }
 
 void CC2500Component::receive_() {
 	uint8_t fifo_length = this->write_reg_(0xFB, 0x00);
 
-	if(fifo_length > 0) {
+	if(fifo_length == 0) {
+		ESP_LOGW(TAG, "Empty FIFO");
+	} else {
 		std::vector<uint8_t> packet;
-		ESP_LOGV(TAG, "  FIFO length: %d", fifo_length);
+		ESP_LOGD(TAG, "  FIFO length: %d", fifo_length);
 		for (int i = 0; i < fifo_length; i++) {
 			uint8_t b = this->write_reg_(0xBF, 0x00);
 			packet.push_back(b);
@@ -212,15 +213,20 @@ void CC2500Component::receive_() {
 		to_hex(s, &packet[0], fifo_length);
 		// ESP_LOGV(TAG, "  data: 0x%s", s);
 
+		// See 15.4 of the datasheet
 		bool checksum_valid = (bool) (packet[fifo_length - 1] & 0b10000000);
 		if(!checksum_valid) {
-			ESP_LOGW(TAG, "Invalid checksum");
+			ESP_LOGW(TAG, "Invalid CRC checksum");
 		} else {
+			// See 17.3 of the datasheet
+			uint8_t RSSI_offset = 72;
 			uint8_t rssi = uint8_t(packet[fifo_length - 2]);
 			if(rssi >= 128)
-				rssi = ((rssi - 256) / 2) - 72;
+				rssi = ((rssi - 256) / 2) - RSSI_offset;
 			else
-				rssi = (rssi / 2) - 72;
+				rssi = (rssi / 2) - RSSI_offset;
+
+			// See 17.6 of the datasheet
 			uint8_t lqi = packet[fifo_length - 1] & 0b01111111;
 
 			bool success = false;
@@ -248,10 +254,10 @@ void CC2500Component::add_device(CC2500Client *device) {
 
 void CC2500Component::reset_() {
 	this->enable();
-	delayMicroseconds(2);
+	esphome::delayMicroseconds(2);
 	this->write_byte(CC2500_SRES);
     //ToDo Wait for chip ready instead of delay
-	delayMicroseconds(45);
+	esphome::delayMicroseconds(45);
 	this->disable();
 }
 
@@ -280,7 +286,7 @@ void CC2500Component::send_strobe_(uint8_t strobe) {
 void CC2500Component::send(Command command) {
 	while(this->busy_) {
 		ESP_LOGV(TAG, "busy");
-		delayMicroseconds(1);
+		esphome::delayMicroseconds(1);
 	}
 
 	this->busy_ = true;
