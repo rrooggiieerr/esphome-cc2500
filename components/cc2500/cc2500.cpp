@@ -188,52 +188,56 @@ void CC2500Component::loop() {
 		// SIDLE
 		this->send_strobe_(CC2500_SIDLE);
 
-		uint8_t fifo_length = this->write_reg_(0xFB, 0x00);
-
 		// Enable receive
 		this->send_strobe_(CC2500_SRX);
 		this->write_reg_(REG_IOCFG1, 0x01);
 
-		if(fifo_length > 0) {
-			std::vector<uint8_t> packet;
-			ESP_LOGV(TAG, "  FIFO length: %d", fifo_length);
-			for (int i = 0; i < fifo_length; i++) {
-				uint8_t b = this->write_reg_(0xBF, 0x00);
-				packet.push_back(b);
+		this->receive_();
+	}
+	delayMicroseconds(10);
+}
+
+void CC2500Component::receive_() {
+	uint8_t fifo_length = this->write_reg_(0xFB, 0x00);
+
+	if(fifo_length > 0) {
+		std::vector<uint8_t> packet;
+		ESP_LOGV(TAG, "  FIFO length: %d", fifo_length);
+		for (int i = 0; i < fifo_length; i++) {
+			uint8_t b = this->write_reg_(0xBF, 0x00);
+			packet.push_back(b);
+		}
+
+		char s[fifo_length*2+1];
+		to_hex(s, &packet[0], fifo_length);
+		// ESP_LOGV(TAG, "  data: 0x%s", s);
+
+		bool checksum_valid = (bool) (packet[fifo_length - 1] & 0b10000000);
+		if(!checksum_valid) {
+			ESP_LOGW(TAG, "Invalid checksum");
+		} else {
+			uint8_t rssi = uint8_t(packet[fifo_length - 2]);
+			if(rssi >= 128)
+				rssi = ((rssi - 256) / 2) - 72;
+			else
+				rssi = (rssi / 2) - 72;
+			uint8_t lqi = packet[fifo_length - 1] & 0b01111111;
+
+			bool success = false;
+			for (auto device : this->devices_) {
+				if(device->receive(&packet[0], fifo_length, rssi, lqi))
+					success = true;
 			}
 
-			char s[fifo_length*2+1];
-			to_hex(s, &packet[0], fifo_length);
-			// ESP_LOGV(TAG, "  data: 0x%s", s);
-
-			bool checksum_valid = (bool) (packet[fifo_length - 1] & 0b10000000);
-			if(!checksum_valid) {
-				ESP_LOGW(TAG, "Invalid checksum");
-			} else {
-				uint8_t rssi = uint8_t(packet[fifo_length - 2]);
-				if(rssi >= 128)
-					rssi = ((rssi - 256) / 2) - 72;
-				else
-					rssi = (rssi / 2) - 72;
-				uint8_t lqi = packet[fifo_length - 1] & 0b01111111;
-
-				bool success = false;
-				for (auto device : this->devices_) {
-					if(device->receive(&packet[0], fifo_length, rssi, lqi))
-						success = true;
-				}
-
-				if(!success) {
-					char s[fifo_length*2+1];
-					to_hex(s, &packet[0], fifo_length);
-					ESP_LOGD(TAG, "Unknown message format");
-					ESP_LOGD(TAG, "  length: %d", fifo_length);
-					ESP_LOGD(TAG, "  data: 0x%s", s);
-				}
+			if(!success) {
+				char s[fifo_length*2+1];
+				to_hex(s, &packet[0], fifo_length);
+				ESP_LOGD(TAG, "Unknown message format");
+				ESP_LOGD(TAG, "  length: %d", fifo_length);
+				ESP_LOGD(TAG, "  data: 0x%s", s);
 			}
 		}
 	}
-	delayMicroseconds(10);
 }
 
 void CC2500Component::add_device(CC2500Client *device) {

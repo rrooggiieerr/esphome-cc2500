@@ -219,6 +219,7 @@ public:
 	void add_device(CC2500Client *device);
 	void send(Command command);
 protected:
+	void receive_();
 	void reset_();
 	uint8_t write_reg_(uint8_t address, uint8_t value);
 	void write_reg_(uint8_t address, uint8_t *data, uint8_t length);
