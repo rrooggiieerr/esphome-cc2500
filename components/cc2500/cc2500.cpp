@@ -37,6 +37,7 @@ void CC2500Component::setup() {
 	                                             gpio::INTERRUPT_RISING_EDGE);
 
 	    // Output Pin Configuration
+	    // this->write_reg_(REG_IOCFG2, VAL_IOCFG2_DEFAULT);
 	    // Interrupt when a complete packet has been received
 	    this->write_reg_(REG_IOCFG2, 0x06);
 	}
@@ -118,13 +119,11 @@ void CC2500Component::setup() {
     // this->write_reg_(REG_WOREVT0, 0x6B);
     // this->write_reg_(REG_WORCTRL, 0xF8);
 
-//    // Front End RX Configuration
-//    this->write_reg_(REG_FREND1, VAL_FREND1_DEFAULT); // 0x56, Reset
-//    //this->write_reg_(REG_FREND1, 0xB6); // 0xB6
+    // Front End RX Configuration
+    this->write_reg_(REG_FREND1, VAL_FREND1_DEFAULT);
 
-//    // Front End TX configuration
-//    this->write_reg_(REG_FREND0, VAL_FREND0_DEFAULT); // 0x08, Reset
-//    //this->write_reg_(REG_FREND0, 0x10); // 0x10
+    // Front End TX configuration
+    this->write_reg_(REG_FREND0, VAL_FREND0_DEFAULT);
 
 //    // Frequency Synthesizer Calibration
 //    //this->write_reg_(REG_FSCAL3, 0xEA); // 0xEA
@@ -135,13 +134,12 @@ void CC2500Component::setup() {
 //    //this->write_reg_(REG_FSCAL0,  0x11); // 0x11
 //    this->write_reg_(REG_FSCAL0, VAL_FSCAL0_DEFAULT); // 0x11
 
-//    // RC Oscillator Configuration
-//	this->write_reg_(REG_RCCTRL1, VAL_RCCTRL1_DEFAULT); // 0x41, Reset
-//	this->write_reg_(REG_RCCTRL0, VAL_RCCTRL0_DEFAULT); // 0x00, Reset
+    // RC Oscillator Configuration
+	// this->write_reg_(REG_RCCTRL1, VAL_RCCTRL1_DEFAULT); // 0x41, Reset
+	// this->write_reg_(REG_RCCTRL0, VAL_RCCTRL0_DEFAULT); // 0x00, Reset
 
-//    // Frequency Synthesizer Calibration Control
-//	//this->write_reg_(REG_FSTEST, VAL_FSTEST_DEFAULT); // 0x59, Reset. For test only. Do not write to this register.
-
+    // Frequency Synthesizer Calibration Control
+	// this->write_reg_(REG_FSTEST, VAL_FSTEST_DEFAULT); // 0x59, Reset. For test only. Do not write to this register.
 
 	if(this->gdo0_pin_ != nullptr) {
 		// Enable analog temperature sensor
