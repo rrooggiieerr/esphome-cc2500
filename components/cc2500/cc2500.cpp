@@ -65,15 +65,14 @@ void CC2500Component::setup() {
 //
 //    // Packet Length
 //    this->write_reg_(REG_PKTLEN, VAL_PKTLEN_DEFAULT); // 0xFF
-//
-//    // Packet Automation Control
-//    this->write_reg_(REG_PKTCTRL1, VAL_PKTCTRL1_DEFAULT);
-//    //this->write_reg_(REG_PKTCTRL0, VAL_PKTCTRL0); // 0x05, Data whitening off
-//    this->write_reg_(REG_PKTCTRL0, VAL_PKTCTRL0_DEFAULT);
+
+    // Packet Automation Control
+    this->write_reg_(REG_PKTCTRL1, VAL_PKTCTRL1_DEFAULT);
+    this->write_reg_(REG_PKTCTRL0, VAL_PKTCTRL0_DEFAULT);
 
     // Frequency Synthesizer Control
     this->write_reg_(REG_FSCTRL1, VAL_FSCTRL1); // 0x09
-    this->write_reg_(REG_FSCTRL0, VAL_FSCTRL0); // 0x00
+    this->write_reg_(REG_FSCTRL0, VAL_FSCTRL0_DEFAULT);
 
     // Frequency Control Word
     this->write_reg_(REG_FREQ2, VAL_FREQ2); // 0x5D
@@ -88,18 +87,15 @@ void CC2500Component::setup() {
     this->write_reg_(REG_MDMCFG1, VAL_MDMCFG1_DEFAULT);
     this->write_reg_(REG_MDMCFG0, VAL_MDMCFG0_DEFAULT);
 
-//    // Modem Deviation Setting
-//    // this->write_reg_(REG_DEVIATN, 0x01);
-//    //this->write_reg_(REG_DEVIATN, 0x00);
-//    this->write_reg_(REG_DEVIATN, VAL_DEVIATN_DEFAULT);
-//
-//    // this->write_reg_(REG_MCSM2, 0x07); // 0x07
-//    // this->write_reg_(REG_MCSM1, 0x30); // 0x30
-//
+    // Modem Deviation Setting
+    this->write_reg_(REG_DEVIATN, VAL_DEVIATN_DEFAULT);
+
+    // this->write_reg_(REG_MCSM2, 0x07); // 0x07
+    // this->write_reg_(REG_MCSM1, 0x30); // 0x30
+
     // Main Radio Control State Machine
-    //this->write_reg_(REG_MCSM0, VAL_MCSM0); // 0x18
-    //this->write_reg_(REG_MCSM0, VAL_MCSM0_DEFAULT);
-    this->write_reg_(REG_MCSM0, 0b00010100); // Automatically calibrate when going from IDLE to RX or TX (or FSTXON)
+    // this->write_reg_(REG_MCSM0, VAL_MCSM0_DEFAULT);
+    this->write_reg_(REG_MCSM0, VAL_MCSM0);
 
 //    // Frequency Offset Compensation
 //    //this->write_reg_(REG_FOCCFG, VAL_FOCCFG); // 0x1D
@@ -108,28 +104,28 @@ void CC2500Component::setup() {
 //    // Bit Synchronization Configuration
 //    //this->write_reg_(REG_BSCFG, VAL_BSCFG); // 0x1C
 //    this->write_reg_(REG_BSCFG, VAL_BSCFG_DEFAULT);
-//
-//    // AGC Control
+
+    // AGC Control
+//    this->write_reg_(REG_AGCCTRL2, VAL_AGCCTRL2_DEFAULT);
 //    // this->write_reg_(REG_AGCCTRL2, VAL_AGCCTRL2); // 0xC7
 //    //this->write_reg_(REG_AGCCTRL2, 0x07);
-//    this->write_reg_(REG_AGCCTRL2, VAL_AGCCTRL2_DEFAULT);
-//    //this->write_reg_(REG_AGCCTRL1, VAL_AGCCTRL1); // 0x00
 //    this->write_reg_(REG_AGCCTRL1, VAL_AGCCTRL1_DEFAULT);
-//    //this->write_reg_(REG_AGCCTRL0, VAL_AGCCTRL0); // 0xB2
+//    //this->write_reg_(REG_AGCCTRL1, VAL_AGCCTRL1); // 0x00
 //    this->write_reg_(REG_AGCCTRL0, VAL_AGCCTRL0_DEFAULT);
-//
-//    // this->write_reg_(REG_WOREVT1, 0x87);
-//    // this->write_reg_(REG_WOREVT0, 0x6B);
-//    // this->write_reg_(REG_WORCTRL, 0xF8);
-//
+//    //this->write_reg_(REG_AGCCTRL0, VAL_AGCCTRL0); // 0xB2
+
+    // this->write_reg_(REG_WOREVT1, 0x87);
+    // this->write_reg_(REG_WOREVT0, 0x6B);
+    // this->write_reg_(REG_WORCTRL, 0xF8);
+
 //    // Front End RX Configuration
-//    //this->write_reg_(REG_FREND1, 0xB6); // 0xB6
 //    this->write_reg_(REG_FREND1, VAL_FREND1_DEFAULT); // 0x56, Reset
-//
+//    //this->write_reg_(REG_FREND1, 0xB6); // 0xB6
+
 //    // Front End TX configuration
-//    //this->write_reg_(REG_FREND0, 0x10); // 0x10
 //    this->write_reg_(REG_FREND0, VAL_FREND0_DEFAULT); // 0x08, Reset
-//
+//    //this->write_reg_(REG_FREND0, 0x10); // 0x10
+
 //    // Frequency Synthesizer Calibration
 //    //this->write_reg_(REG_FSCAL3, 0xEA); // 0xEA
 //    this->write_reg_(REG_FSCAL3, VAL_FSCAL3_DEFAULT); // 0xA9, Reset
@@ -138,18 +134,14 @@ void CC2500Component::setup() {
 //    this->write_reg_(REG_FSCAL1, VAL_FSCAL1_DEFAULT); // 0x20, Reset
 //    //this->write_reg_(REG_FSCAL0,  0x11); // 0x11
 //    this->write_reg_(REG_FSCAL0, VAL_FSCAL0_DEFAULT); // 0x11
-//
+
 //    // RC Oscillator Configuration
 //	this->write_reg_(REG_RCCTRL1, VAL_RCCTRL1_DEFAULT); // 0x41, Reset
 //	this->write_reg_(REG_RCCTRL0, VAL_RCCTRL0_DEFAULT); // 0x00, Reset
-//
+
 //    // Frequency Synthesizer Calibration Control
 //	//this->write_reg_(REG_FSTEST, VAL_FSTEST_DEFAULT); // 0x59, Reset. For test only. Do not write to this register.
-//
-//    // Various Test Settings
-//    this->write_reg_(REG_TEST2, VAL_TEST2_DEFAULT); // 0x88, Reset
-//    this->write_reg_(REG_TEST1, VAL_TEST1_DEFAULT); // 0x31, Reset
-//    this->write_reg_(REG_TEST0, VAL_TEST0_DEFAULT); // 0x0B, Reset
+
 
 	if(this->gdo0_pin_ != nullptr) {
 		// Enable analog temperature sensor
@@ -157,8 +149,12 @@ void CC2500Component::setup() {
 		this->write_reg_(REG_PTEST, 0x7F);
 	}
 
+	// Various Test Settings
+    // this->write_reg_(REG_TEST2, VAL_TEST2_DEFAULT); // 0x88, Reset
+	// this->write_reg_(REG_TEST1, VAL_TEST1_DEFAULT); // 0x31, Reset
+	// this->write_reg_(REG_TEST0, VAL_TEST0_DEFAULT); // 0x0B, Reset
+
     // Output Power Programming
-    // this->write_reg_(REG_PATABLE, 0xFF);
     this->write_reg_(REG_PATABLE, this->output_power_.value_or(0xFF));
 
 	// SIDLE
