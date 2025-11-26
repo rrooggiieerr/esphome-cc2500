@@ -1,0 +1,56 @@
+substitutions:
+  name: cc2500
+  friendly_name: CC2500
+
+packages:
+  rrooggiieerr.livingcolors1: github://rrooggiieerr/esphome-cc2500/cc2500-shieldv2-d1mini.yaml
+
+esphome:
+  name: ${name}
+  name_add_mac_suffix: false
+  friendly_name: ${friendly_name}
+  comment: "Controls CC2500 devices"
+
+esp8266:
+  board: d1_mini
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+# OTA is required for Over-the-Air updating
+ota:
+  - platform: esphome
+    id: ota_esphome
+
+wifi:
+  min_auth_mode: WPA2
+
+  # Set up a wifi access point using the device name above
+  ap:
+
+# In combination with the `ap` this allows the user
+# to provision wifi credentials to the device.
+captive_portal:
+
+light:
+  - platform: status_led
+    id: _status_led
+    name: "Status"
+    pin:
+      number: GPIO2
+      inverted: True
+    internal: True
+
+binary_sensor:
+  - platform: gpio
+    id: boot_button
+    pin:
+      number: GPIO0
+      mode:
+        input: True
+        pullup: True
+      inverted: True
+    internal: True
